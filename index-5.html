@@ -1,0 +1,578 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#0d0d0d">
+<script>(function(d){d.documentElement.classList.add("js");window.__steps={};window.ubaidStep=function(k){window.__steps[k]=1;if(window.__onStep)window.__onStep()};setTimeout(function(){if(!window.__ubaidOK)d.documentElement.classList.remove("js")},6000)})(document);</script>
+<title>UBAID — Class 9 Learning Portal</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<script src="https://cdn.tailwindcss.com"></script>
+<script>tailwind.config={theme:{extend:{colors:{ink:'#0d0d0d',crimson:'#ff2b2b'}}}}</script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-storage-compat.js"></script>
+<style>
+/* ===== UBAID motion design system ===== */
+:root{--bg:#0d0d0d;--panel:#171717;--panel2:#202020;--text:#fff;--muted:#9ca3af;--red:#ff2b2b;--line:#ffffff16;
+--ease:cubic-bezier(.22,.8,.2,1);--ease-io:cubic-bezier(.65,0,.35,1);--dur-s:.2s;--dur-m:.4s;--dur-l:.8s;--dist:18px;--stag:70ms}
+@property --ang{syntax:'<angle>';inherits:false;initial-value:0deg}
+*{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;background:var(--bg);color:var(--text);font-family:Outfit,Arial,sans-serif;overflow-x:hidden}
+body:before{content:"";position:fixed;inset:0;pointer-events:none;z-index:-1;background:radial-gradient(circle at 15% 20%,#ff2b2b13,transparent 30%),radial-gradient(circle at 85% 70%,#ffffff08,transparent 25%)}
+#particles{position:fixed;inset:0;z-index:-1;pointer-events:none;opacity:.82}
+body:after{content:"";position:fixed;inset:0;pointer-events:none;z-index:-2;background:radial-gradient(ellipse at 50% 0%,#ff2b2b0a,transparent 55%)}
+a{color:inherit;text-decoration:none}button,input,select,textarea{font:inherit}
+
+/* shared keyframes (single source) */
+@keyframes rise{from{opacity:0;translate:0 var(--dist)}to{opacity:1;translate:0 0}}
+@keyframes fadeIn{from{opacity:0}}
+@keyframes fadeOut{to{opacity:0}}
+@keyframes modalIn{from{opacity:0;transform:translateY(16px) scale(.98)}}
+@keyframes modalOut{to{opacity:0;transform:translateY(10px) scale(.985)}}
+@keyframes letterIn{from{opacity:0;translate:0 .35em;filter:blur(6px)}to{opacity:1;translate:0 0;filter:none}}
+@keyframes sweep{to{translate:120% 0}}
+@keyframes pulseOnce{40%{text-shadow:0 0 22px #ff2b2bcc}}
+@keyframes spin{to{transform:rotate(360deg)}}
+@keyframes write{to{stroke-dashoffset:0}}
+@keyframes float{0%,100%{transform:rotateX(12deg) rotateY(-14deg) rotateZ(-9deg)}50%{transform:rotateX(12deg) rotateY(-14deg) rotateZ(-5deg) translateY(-12px)}}
+@keyframes bob{50%{translate:0 -5px}}
+@keyframes shadow{50%{transform:scale(.8);opacity:.55}}
+@keyframes artIn{from{opacity:0;transform:translateY(26px) scale(.94)}to{opacity:1;transform:none}}
+@keyframes trace{0%{--ang:0deg;opacity:0}15%{opacity:1}100%{--ang:360deg;opacity:.5}}
+@keyframes btnSweep{to{translate:420% 0}}
+@keyframes ripple{to{transform:scale(1);opacity:0}}
+@keyframes toastIn{from{opacity:0;translate:0 10px}}
+
+/* loader (only exists when JS is running) */
+#loader{display:none;position:fixed;inset:0;z-index:200;background:var(--bg);place-items:center}
+.js #loader{display:grid}
+#loader.out{opacity:0;pointer-events:none;transition:opacity .5s var(--ease)}
+.ldbox{text-align:center}.ldbox .logo{font-size:30px}
+.ldbar{width:150px;height:2px;margin:20px auto 0;background:#ffffff14;overflow:hidden;border-radius:2px}
+.ldbar i{display:block;height:100%;background:var(--red);transform-origin:0 0;transform:scaleX(var(--p,0));transition:transform 2s cubic-bezier(.45,.05,.35,1)}
+
+/* kinetic logo */
+.logo{font-size:22px;font-weight:800;letter-spacing:.18em;display:inline-block;position:relative;overflow:hidden}
+.logo .dot{color:var(--red)}.logo .lt{display:inline-block}
+.js .logo .lt{opacity:0}
+.logo.in .lt{animation:letterIn .7s var(--ease) calc(var(--n,0)*55ms) both}
+.logo:after{content:"";position:absolute;inset:0;pointer-events:none;translate:-120% 0;background:linear-gradient(100deg,transparent 35%,#ff2b2b55 50%,transparent 65%)}
+.logo.in:after{animation:sweep 1.1s var(--ease-io) .55s both}
+
+/* navigation */
+.nav{position:sticky;top:0;z-index:30;background:#0d0d0dd9;-webkit-backdrop-filter:blur(12px);backdrop-filter:blur(12px);border-bottom:1px solid var(--line);transition:background-color var(--dur-m),box-shadow var(--dur-m)}
+.nav.scrolled{background:#0d0d0df2;box-shadow:0 10px 30px #0007}
+.navinner{max-width:1200px;margin:auto;padding:16px 24px;display:flex;align-items:center;justify-content:space-between;gap:16px}
+.navlinks{display:flex;align-items:center;gap:22px;color:#c4c4c4;font-size:14px}
+.navlinks a{position:relative;padding:4px 0;transition:color var(--dur-s)}
+.navlinks a:hover,.navlinks a:focus-visible{color:#fff;outline:none}
+.navlinks a:after{content:"";position:absolute;left:0;right:0;bottom:-2px;height:1px;background:var(--red);transform:scaleX(0);transform-origin:left;transition:transform var(--dur-m) var(--ease)}
+.navlinks a:hover:after,.navlinks a:focus-visible:after{transform:scaleX(1)}
+
+/* buttons */
+.btn{position:relative;overflow:hidden;border:1px solid #ffffff25;background:#ffffff08;padding:11px 16px;border-radius:12px;cursor:pointer;color:white;translate:var(--bx,0px) var(--by,0px);
+ transition:border-color var(--dur-s),background-color var(--dur-s),box-shadow var(--dur-m),transform var(--dur-s) var(--ease),translate var(--dur-s) var(--ease)}
+.btn:hover,.btn:focus-visible{border-color:#ff2b2b88;transform:translateY(-2px);box-shadow:0 8px 28px #ff2b2b16}
+.btn:focus-visible{outline:2px solid #ff2b2b88;outline-offset:2px}
+.btn:active{transform:scale(.97)}
+.btn-red{isolation:isolate;background:var(--red);border-color:var(--red);color:white;font-weight:600}.btn-red:hover{background:#e51f1f}
+.btn-red:after{content:"";position:absolute;inset:-20% auto -20% 0;width:38%;translate:-160% 0;transform:skewX(-20deg);background:linear-gradient(90deg,transparent,#ffffff55,transparent);pointer-events:none}
+.btn-red:hover:after,.btn-red:focus-visible:after{animation:btnSweep .8s var(--ease) both}
+.rip{position:absolute;border-radius:50%;background:#ffffff38;pointer-events:none;transform:scale(0);animation:ripple .6s var(--ease) forwards}
+
+/* hero */
+.hero{max-width:1200px;margin:auto;padding:78px 24px 54px;min-height:410px;display:grid;grid-template-columns:1.15fr .85fr;align-items:center;gap:35px}
+.eyebrow{color:var(--red);font-size:12px;letter-spacing:.25em;text-transform:uppercase;font-weight:700}
+.hero h1{font-size:clamp(42px,7vw,82px);line-height:.98;letter-spacing:-.055em;margin:18px 0 20px;font-weight:700}
+.hero h1 em{font-style:normal;color:var(--red)}
+.hero p{max-width:570px;color:#a8a8a8;line-height:1.7;font-size:16px}
+.hero-actions{display:flex;gap:12px;flex-wrap:wrap;margin-top:26px}
+.js .hero>div:first-child>*,.js .hero-art{opacity:0}
+.go .hero>div:first-child>*{animation:rise var(--dur-l) var(--ease) var(--hd,0s) both}
+.hero>div:first-child>:nth-child(1){--hd:.05s}.hero>div:first-child>:nth-child(2){--hd:.15s}.hero>div:first-child>:nth-child(3){--hd:.27s}.hero>div:first-child>:nth-child(4){--hd:.4s}.hero>div:first-child>:nth-child(5){--hd:.52s}
+.go .hero h1 em{animation:pulseOnce 2s var(--ease-io) 1s both}
+.go .hero-art{animation:artIn 1s var(--ease) .45s both}
+
+/* study desk */
+.hero-art{height:260px;position:relative;display:grid;place-items:center;perspective:900px;border-radius:28px}
+.hero-art:after{content:"";position:absolute;inset:auto 0 18px 0;margin:auto;width:170px;height:20px;border-radius:50%;background:radial-gradient(closest-side,#000c,transparent);animation:shadow 5s ease-in-out infinite;pointer-events:none}
+.orbit{width:230px;height:230px;border:1px solid #ff2b2b44;border-radius:50%;position:absolute;animation:spin 18s linear infinite;translate:calc(var(--px,0)*-10px) calc(var(--py,0)*-8px)}
+.orbit:before,.orbit:after{content:"";position:absolute;width:8px;height:8px;border-radius:50%;background:var(--red);box-shadow:0 0 20px var(--red)}
+.orbit:before{top:20px;left:35px}.orbit:after{bottom:24px;right:20px}
+.book-stack{width:190px;height:150px;position:relative;transform-style:preserve-3d;transform:rotateX(12deg) rotateY(-14deg) rotateZ(-9deg);animation:float 5s ease-in-out infinite;translate:calc(var(--px,0)*14px) calc(var(--py,0)*10px)}
+.book{position:absolute;width:180px;height:42px;border:1px solid #ffffff2a;border-radius:7px;background:linear-gradient(110deg,#292929,#121212);box-shadow:0 15px 35px #0008;animation:bob 5s ease-in-out infinite}
+.book:nth-child(1){top:0;left:0;border-left:5px solid var(--red);transform:translateZ(36px);animation-delay:-.6s}
+.book:nth-child(2){top:48px;left:12px;border-left:5px solid #fff;transform:translateZ(18px);animation-delay:-1.4s}
+.book:nth-child(3){top:96px;left:24px;border-left:5px solid #777;animation-delay:-2.2s}
+.pencil{position:absolute;right:3%;top:22px;width:150px;opacity:.9;translate:calc(var(--px,0)*24px) calc(var(--py,0)*16px)}
+.pencil path{stroke-dasharray:400;stroke-dashoffset:400;animation:write 3s ease forwards}
+.js .pencil path{animation-play-state:paused}.go .pencil path{animation-play-state:running}
+.hero-art.off *,.hero-art.off:after,.modal-open .hero-art *,.modal-open .hero-art:after{animation-play-state:paused}
+
+/* cursor spotlight (hero art + about panel) */
+.spot{position:relative}
+.spot:before{content:"";position:absolute;inset:0;border-radius:inherit;pointer-events:none;background:radial-gradient(280px circle at var(--mx,50%) var(--my,50%),#ff2b2b1c,transparent 70%);opacity:var(--sp,0);transition:opacity var(--dur-m)}
+.aboutpanel{overflow:hidden}.aboutpanel>*{position:relative}
+
+/* sections, search, reveals */
+.section{max-width:1200px;margin:auto;padding:35px 24px 75px}
+.sectionhead{display:flex;justify-content:space-between;align-items:end;gap:20px;margin-bottom:24px}
+.sectionhead h2{font-size:clamp(26px,4vw,40px);margin:8px 0 0;letter-spacing:-.04em}
+.search{display:flex;align-items:center;gap:10px;background:#ffffff08;border:1px solid var(--line);border-radius:13px;padding:0 14px;min-width:min(100%,300px);transform-origin:right center;
+ transition:border-color var(--dur-m),box-shadow var(--dur-m),background-color var(--dur-m),transform var(--dur-m) var(--ease)}
+.search:focus-within{border-color:#ff2b2b66;background:#ffffff0d;box-shadow:0 0 0 4px #ff2b2b14;transform:scale(1.025)}
+.search i,.search svg{transition:color var(--dur-m)}.search:focus-within svg{color:var(--red)!important}
+.search input{background:transparent;border:0;outline:0;color:white;padding:14px 0;width:100%}
+.js .reveal{opacity:0}
+.reveal.in{animation:rise var(--dur-l) var(--ease) calc(var(--i,0)*var(--stag)) both}
+.reveal.in.swap{animation:rise .35s var(--ease) calc(var(--i,0)*35ms) both}
+.reveal.in.static{animation:none;opacity:1}
+footer.in strong,.aboutpanel.in .credit strong{animation:pulseOnce 1.8s var(--ease-io) .5s both}
+
+/* subject cards */
+.subjectgrid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px}
+.subject{position:relative;text-align:left;color:inherit;background:linear-gradient(145deg,#1c1c1c,#111);border:1px solid #ffffff14;border-radius:20px;padding:23px;min-height:178px;overflow:hidden;cursor:pointer;
+ transform:perspective(800px) rotateX(var(--rx,0deg)) rotateY(var(--ry,0deg)) translateY(var(--ty,0px)) scale(var(--sc,1));
+ transition:transform var(--dur-m) var(--ease),border-color var(--dur-m),box-shadow var(--dur-m)}
+.subject:before{content:"";position:absolute;width:160px;height:160px;border-radius:50%;background:#ff2b2b0c;right:-70px;bottom:-90px;transition:transform .35s,background-color .35s}
+.subject:hover,.subject:focus-visible{--ty:-6px;border-color:#ff2b2b66;box-shadow:0 18px 44px #0007,0 0 28px #ff2b2b16;outline:none}
+.subject:focus-visible{box-shadow:0 18px 44px #0007,0 0 0 2px #ff2b2b88}
+.subject:active{--sc:.985}
+.subject:hover:before,.subject:focus-visible:before{transform:scale(1.5);background:#ff2b2b17}
+.subject:after{content:"";position:absolute;inset:0;border-radius:inherit;padding:1px;pointer-events:none;opacity:0;background:conic-gradient(from var(--ang),transparent 0 62%,#ff2b2b 82%,#ff8a8a 90%,transparent 100%);
+ -webkit-mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);-webkit-mask-composite:xor;mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);mask-composite:exclude}
+.subject:hover:after,.subject:focus-visible:after{animation:trace 1.2s var(--ease-io) both}
+.subject .fx{position:absolute;inset:0;z-index:0;pointer-events:none;background:radial-gradient(240px circle at var(--mx,50%) var(--my,50%),#ff2b2b22,transparent 70%);opacity:var(--sp,0);transition:opacity var(--dur-m)}
+.subject .num,.subject .ico,.subject h3,.subject p{position:relative;z-index:1}
+.subject .num{display:block;font-size:11px;color:#777;letter-spacing:.16em}.subject .ico{display:block;color:var(--red);font-size:23px;margin:17px 0 13px}
+.subject h3{font-size:20px;font-weight:600;margin:0 0 8px}.subject p{font-size:13px;color:#858585;margin:0}
+.subject .arrow{position:absolute;z-index:1;right:22px;top:23px;color:#666;transition:color .3s,transform .3s}.subject:hover .arrow,.subject:focus-visible .arrow{color:var(--red);transform:translate(3px,-3px)}
+.nores{grid-column:1/-1;text-align:center;padding:50px 12px;color:#777;border:1px dashed #ffffff1c;border-radius:20px;line-height:1.7;animation:rise var(--dur-m) var(--ease) both}
+.nores svg{font-size:28px;width:1em;height:1em}.nores i,.nores svg{font-size:28px;color:var(--red);display:block;margin-bottom:12px;opacity:.8}.nores strong{color:#fff;font-weight:500}.nores .btn{margin-top:14px}
+.credit{color:#777;font-size:13px}
+
+svg.i{width:1em;height:1em;display:inline-block;vertical-align:-.14em;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round;flex-shrink:0}
+
+.empty svg,.nores svg{margin-left:auto;margin-right:auto}
+
+/* overlays + modal */
+.overlay{position:fixed;inset:0;z-index:60;background:#050505f0;-webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px);display:none;overflow-y:auto;padding:24px}
+.overlay.show{display:block;animation:fadeIn var(--dur-m) var(--ease) both}
+.overlay.show .modal{animation:modalIn var(--dur-m) var(--ease) both}
+.overlay.show .modalhead{animation:rise var(--dur-m) var(--ease) .06s both}
+.overlay.show .tabs{animation:rise var(--dur-m) var(--ease) .1s both}
+.overlay.show .contentarea,.overlay.show #adminContent{animation:rise var(--dur-m) var(--ease) .14s both}
+.overlay.closing{pointer-events:none;animation:fadeOut .22s var(--ease-io) both}
+.overlay.closing .modal{animation:modalOut .22s var(--ease-io) both}
+.modal{max-width:950px;margin:3vh auto;background:linear-gradient(145deg,#1b1b1b,#101010);border:1px solid #ffffff1c;border-radius:25px;min-height:85vh;overflow:hidden;box-shadow:0 30px 100px #000}
+.modalhead{padding:26px 30px;border-bottom:1px solid var(--line);display:flex;justify-content:space-between;align-items:center;gap:15px}
+.modalhead h2{font-size:30px;margin:5px 0}.close{display:grid;place-items:center;width:42px;height:42px;border-radius:50%;border:1px solid #ffffff25;background:#ffffff08;color:white;cursor:pointer;transition:border-color var(--dur-s),transform var(--dur-s) var(--ease)}
+.close:hover,.close:focus-visible{border-color:#ff2b2b88;transform:rotate(90deg)}.close:focus-visible{outline:2px solid #ff2b2b88;outline-offset:2px}
+.tabs{display:flex;gap:5px;padding:15px 30px;border-bottom:1px solid var(--line);position:relative}
+.tab{padding:12px 18px;border:0;background:transparent;color:#888;cursor:pointer;border-radius:9px;position:relative;transition:color var(--dur-s),background-color var(--dur-s)}
+.tab:hover{color:#ddd}.tab.active{color:white;background:#ff2b2b16}.tab:focus-visible{outline:2px solid #ff2b2b88;outline-offset:-2px}
+.tabind{position:absolute;left:0;bottom:-1px;width:1px;height:2px;background:linear-gradient(90deg,var(--red),#ff7a7a);transform-origin:0 0;transform:translateX(0) scaleX(0);transition:transform var(--dur-m) var(--ease);pointer-events:none}
+.contentarea{padding:28px 30px}
+.resource{display:flex;align-items:center;gap:15px;border:1px solid #ffffff12;background:#ffffff04;border-radius:15px;padding:17px;margin-bottom:12px;transition:border-color var(--dur-m),background-color var(--dur-m)}
+.resource:hover{border-color:#ff2b2b33;background:#ffffff07}
+.contentarea.fresh .resource,.contentarea.fresh .empty{animation:rise var(--dur-m) var(--ease) calc(var(--i,0)*45ms + .1s) both}
+.resource .resicon{width:45px;height:45px;display:grid;place-items:center;background:#ff2b2b14;color:var(--red);border-radius:12px;flex-shrink:0}
+.resource h4{margin:0 0 4px;font-weight:600}.resource small{color:#888}.resource .resactions{margin-left:auto;display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.resource .btn{padding:9px 12px;font-size:13px}.empty{color:#777;text-align:center;padding:45px 10px}
+.adminform{max-width:560px;margin:30px auto;padding:28px;border:1px solid #ffffff18;border-radius:20px;background:#ffffff05}
+.adminform h2{margin-top:0}.field{display:grid;gap:8px;margin:15px 0}.field label{font-size:13px;color:#aaa}.field input,.field select,.field textarea{background:#101010;border:1px solid #ffffff20;border-radius:10px;padding:12px;color:white;outline:none;width:100%;transition:border-color var(--dur-s),box-shadow var(--dur-s)}.field input:focus,.field textarea:focus,.field select:focus{border-color:#ff2b2b88;box-shadow:0 0 0 3px #ff2b2b14}
+.adminpanel{max-width:1050px;margin:25px auto;padding:25px;background:#151515;border:1px solid #ffffff18;border-radius:20px}
+.adminlist{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}.adminitem{border:1px solid #ffffff15;padding:12px;border-radius:12px;display:flex;justify-content:space-between;gap:8px;align-items:center}
+footer{border-top:1px solid var(--line);padding:35px 24px;text-align:center;color:#777}footer strong{color:white;letter-spacing:.13em;text-shadow:0 0 15px #ff2b2b77}
+.toast{position:fixed;bottom:22px;left:50%;transform:translateX(-50%);background:#202020;border:1px solid #ffffff25;padding:13px 18px;border-radius:12px;z-index:100;display:none;animation:toastIn var(--dur-m) var(--ease)}
+@media(max-width:800px){.hero{grid-template-columns:1fr;padding-top:55px}.hero-art{height:210px}.pencil{right:0}.subjectgrid{grid-template-columns:repeat(2,minmax(0,1fr))}.navlinks{gap:12px}.navinner{padding:13px 18px}}
+@media(max-width:520px){.navlinks a:not(.adminlink){display:none}.hero{padding:45px 20px 35px}.section{padding:30px 18px 55px}.sectionhead{align-items:stretch;flex-direction:column}.search{min-width:0}.subjectgrid{gap:10px}.subject{padding:17px;min-height:160px;border-radius:16px}.subject h3{font-size:17px}.subject .ico{margin:14px 0 10px}.overlay{padding:9px}.modal{border-radius:18px;margin:1vh auto}.modalhead{padding:20px}.modalhead h2{font-size:24px}.tabs{padding:12px 14px}.tab{padding:10px 12px}.contentarea{padding:18px 14px}.resource{align-items:flex-start;padding:13px;gap:10px}.resource .resactions{flex-direction:column;align-items:stretch}.adminlist{grid-template-columns:1fr}.hero h1{font-size:49px}}
+@media(prefers-reduced-motion:reduce){*,*:before,*:after{animation-duration:.01ms!important;animation-delay:0s!important;animation-iteration-count:1!important;transition-duration:.01ms!important;transition-delay:0s!important;scroll-behavior:auto!important}}
+</style>
+</head>
+<body>
+<canvas id="particles"></canvas>
+<div id="loader" aria-hidden="true"><div class="ldbox"><div class="logo" data-now>U<span class="dot">.</span>BAID</div><div class="ldbar"><i></i></div></div></div>
+<nav class="nav"><div class="navinner">
+<a class="logo" href="#">U<span class="dot">.</span>BAID</a>
+<div class="navlinks"><a href="#subjects">Subjects</a><a href="#about">About</a><button class="btn adminlink" onclick="openAdmin()">Admin Portal <i class="fa-solid fa-arrow-up-right-from-square"></i></button></div>
+</div></nav>
+<header class="hero">
+<div>
+<div class="eyebrow">Punjab Board · Class 09</div>
+<h1>Learn with<br><em>precision.</em></h1>
+<p>Your focused learning space for textbooks, notes, and past papers. Everything you need for Class 9, organized in one premium portal.</p>
+<div class="hero-actions"><a class="btn btn-red" href="#subjects">Explore subjects <i class="fa-solid fa-arrow-right"></i></a><button class="btn" onclick="openAdmin()">Admin access</button></div>
+<div class="credit" style="margin-top:25px">Designed &amp; Engineered by <strong style="color:#ff2b2b">UBAID</strong></div>
+</div>
+<div class="hero-art spot" aria-hidden="true">
+<svg class="pencil" viewBox="0 0 180 70" fill="none"><path d="M12 52 L130 12 L151 25 L31 65 Z" stroke="#ff2b2b" stroke-width="2" stroke-linejoin="round"/><path d="M130 12 L151 25 L165 7 L144 0 Z" stroke="#ff2b2b" stroke-width="2"/><path d="M12 52 L4 69 L31 65" stroke="#ff2b2b" stroke-width="2"/></svg>
+<div class="orbit"></div><div class="book-stack"><div class="book"></div><div class="book"></div><div class="book"></div></div>
+</div>
+</header>
+<main>
+<section class="section" id="subjects">
+<div class="sectionhead"><div class="reveal"><div class="eyebrow">The curriculum</div><h2>Choose your subject</h2></div>
+<div class="search reveal" style="--i:1"><i class="fa-solid fa-magnifying-glass" style="color:#777"></i><input id="search" placeholder="Search subjects..." oninput="renderSubjects()"></div></div>
+<div class="subjectgrid" id="subjectgrid"></div>
+</section>
+<section class="section" id="about" style="padding-top:0">
+<div class="aboutpanel spot reveal" style="border:1px solid #ffffff15;background:linear-gradient(110deg,#171717,#101010);border-radius:22px;padding:28px;display:flex;align-items:center;justify-content:space-between;gap:20px;flex-wrap:wrap">
+<div><div class="eyebrow">Built for students</div><h2 style="font-size:27px;margin:9px 0">Your study desk. Anywhere.</h2><p style="color:#888;margin:0">Browse learning material by subject and resource type.</p></div>
+<div class="credit">A learning project by <strong style="color:#fff">UBAID</strong></div>
+</div>
+</section>
+</main>
+<footer class="reveal"><div class="logo" data-kin style="font-size:18px;margin-bottom:10px">U<span class="dot">.</span>BAID</div><div>Designed &amp; Engineered by <strong>UBAID</strong></div><div style="margin-top:8px;font-size:11px">Class 9 · Punjab Board Learning Portal</div><button class="btn" style="margin-top:18px" onclick="openAdmin()">Admin Portal</button></footer>
+
+<div class="overlay" id="subjectOverlay" onclick="outsideClose(event,'subjectOverlay')"><div class="modal">
+<div class="modalhead"><div><div class="eyebrow">Class 09 learning resources</div><h2 id="modalTitle">Subject</h2></div><button class="close" onclick="closeOverlay('subjectOverlay')" aria-label="Close"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M3 3l10 10M13 3L3 13"/></svg></button></div>
+<div class="tabs" id="tabs"></div><div class="contentarea" id="resourceContent"></div>
+</div></div>
+<div class="overlay" id="adminOverlay" onclick="outsideClose(event,'adminOverlay')"><div class="modal" style="min-height:0;max-width:720px">
+<div class="modalhead"><div><div class="eyebrow">Restricted access</div><h2>Admin Portal</h2></div><button class="close" onclick="closeOverlay('adminOverlay')" aria-label="Close"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M3 3l10 10M13 3L3 13"/></svg></button></div>
+<div id="adminContent"></div></div></div>
+<div class="toast" id="toast"></div>
+<script>
+const SUBJECTS=[
+['Mathematics','fa-square-root-variable','Numbers, algebra & geometry'],
+['English','fa-book-open','Grammar, reading & writing'],
+['Chemistry','fa-flask','Matter, reactions & lab concepts'],
+['Urdu','fa-feather-pointed','Language, literature & grammar'],
+['Computer Science','fa-laptop-code','Computing & programming'],
+['Physics','fa-atom','Motion, energy & matter'],
+['Tarjuma-tul-Quran (T.Q.)','fa-book-quran','Translation & understanding'],
+['Islamiat','fa-moon','Islamic studies & concepts'],
+['Biology','fa-dna','Life sciences & living systems']
+];
+const firebaseConfig={
+  apiKey:'AIzaSyBrinlgV7Hoz_6KirrJHjvtnk7rHDfiDhM',
+  authDomain:'project-9thc-by-ubaid.firebaseapp.com',
+  projectId:'project-9thc-by-ubaid',
+  storageBucket:'project-9thc-by-ubaid.firebasestorage.app',
+  messagingSenderId:'640916950002',
+  appId:'1:640916950002:web:5f4d0ef7e7f78bbc54f96b',
+  measurementId:'G-F17PNXBBV1'
+};
+let resources={},currentSubject=null,currentTab='Books',admin=false,db=null,storage=null,auth=null,firebaseReady=false,unsubscribeResources=null;
+function initFirebase(){
+ try{if(firebaseConfig.apiKey.startsWith('PASTE_')||firebaseConfig.projectId==='YOUR_PROJECT_ID'||firebaseConfig.appId.startsWith('PASTE_')){console.warn('Firebase config placeholders are still present');ubaidStep('data');return}if(!firebase.apps.length)firebase.initializeApp(firebaseConfig);auth=firebase.auth();db=firebase.firestore();storage=firebase.storage();firebaseReady=true;
+ auth.onAuthStateChanged(authUser=>{admin=!!authUser;if(document.getElementById('adminOverlay').classList.contains('show'))renderAdmin();if(currentSubject)renderResources()});
+ unsubscribeResources=db.collection('resources').onSnapshot(snapshot=>{ubaidStep('data');resources={};snapshot.forEach(doc=>{const r=doc.data();resources[r.subject]=resources[r.subject]||[];resources[r.subject].push({...r,id:doc.id})});renderSubjects();if(currentSubject)renderResources();if(admin&&document.getElementById('adminOverlay').classList.contains('show'))renderAdminList()},err=>{ubaidStep('data');console.error(err);toast('Could not load shared resources. Check Firestore rules/config.')});
+ }catch(err){ubaidStep('data');console.error(err);toast('Firebase setup is incomplete. Add your Firebase config.')}
+}
+function saveResources(){/* Cloud Firestore is the shared source of truth. */}
+
+function getSubjectNames(){return [...SUBJECTS.map(s=>s[0]),...Object.keys(resources).filter(n=>!SUBJECTS.some(s=>s[0]===n))]}
+function renderSubjects(){
+ const sb=document.getElementById('search'),raw=sb.value||'',q=raw.toLowerCase();
+ const grid=document.getElementById('subjectgrid');grid.innerHTML='';
+ const names=getSubjectNames().filter(n=>n.toLowerCase().includes(q));
+ names.forEach((name,i)=>{
+  const base=SUBJECTS.find(s=>s[0]===name),icon=base?base[1]:'fa-book';
+  const card=document.createElement('button');card.type='button';card.className='subject reveal';card.dataset.name=name;card.innerHTML=`<span class="fx" aria-hidden="true"></span><span class="num">SUBJECT ${String(i+1).padStart(2,'0')}</span><i class="fa-solid ${icon} ico"></i><h3>${escapeHTML(name)}</h3><p>Books · Notes · Past Papers</p><i class="fa-solid fa-arrow-up-right-from-square arrow"></i>`;
+  card.onclick=()=>openSubject(name);grid.appendChild(card);
+ });
+ if(!names.length)grid.innerHTML=`<div class="nores" role="status"><i class="fa-regular fa-folder-open"></i>No subjects match <strong>“${escapeHTML(raw)}”</strong><br><button class="btn" type="button" onclick="clearSearch()">Clear search</button></div>`;
+ if(window.ubaidCards)ubaidCards();
+}
+function clearSearch(){const s=document.getElementById('search');s.value='';renderSubjects();s.focus()}
+function openSubject(name){
+ currentSubject=name;currentTab='Books';document.getElementById('modalTitle').textContent=name;
+ showOverlay('subjectOverlay');renderTabs(true);renderResources();
+}
+function positionTabInd(instant){
+ const tabs=document.getElementById('tabs'),ind=tabs&&tabs.querySelector('.tabind'),a=tabs&&tabs.querySelector('.tab.active');if(!ind||!a)return;
+ if(instant)ind.style.transition='none';
+ ind.style.transform=`translateX(${a.offsetLeft}px) scaleX(${a.offsetWidth})`;
+ if(instant){void ind.offsetWidth;ind.style.transition=''}
+}
+function renderTabs(instant){
+ const tabs=document.getElementById('tabs'),hadFocus=tabs.contains(document.activeElement);let ind=tabs.querySelector('.tabind'),active=null;
+ if(!ind){ind=document.createElement('span');ind.className='tabind';ind.setAttribute('aria-hidden','true');tabs.appendChild(ind)}
+ tabs.querySelectorAll('.tab').forEach(t=>t.remove());
+ ['Books','Notes','Past Papers'].forEach(t=>{const b=document.createElement('button');b.className='tab'+(currentTab===t?' active':'');b.textContent=t;b.onclick=()=>{currentTab=t;renderTabs();renderResources()};tabs.insertBefore(b,ind);if(currentTab===t)active=b});
+ positionTabInd(!!instant);
+ if(hadFocus&&active)active.focus({preventScroll:true});
+}
+function renderResources(){
+ const area=document.getElementById('resourceContent');const key=currentSubject+'|'+currentTab,fresh=area.dataset.key!==key;area.dataset.key=key;area.classList.toggle('fresh',fresh);area.innerHTML='';
+ const list=(resources[currentSubject]||[]).filter(r=>r.type===currentTab);
+ if(!list.length){area.innerHTML=`<div class="empty"><i class="fa-regular fa-folder-open" style="font-size:30px;display:block;margin-bottom:12px"></i>No ${currentTab.toLowerCase()} added yet.<br><small>Check back later for learning resources.</small></div>`;return}
+ list.forEach((item,idx)=>{
+  const row=document.createElement('div');row.className='resource';row.style.setProperty('--i',Math.min(idx,8));
+  row.innerHTML=`<div class="resicon"><i class="fa-solid ${currentTab==='Books'?'fa-book':currentTab==='Notes'?'fa-file-lines':'fa-file-circle-check'}"></i></div><div><h4>${escapeHTML(item.title)}</h4><small>${escapeHTML(item.description||currentTab)}</small></div><div class="resactions"><a class="btn btn-red" href="${safeURL(item.url)}" target="_blank" rel="noopener">Open <i class="fa-solid fa-arrow-up-right-from-square"></i></a>${admin?`<button class="btn" onclick="editResource('${item.id}')">Edit</button><button class="btn" onclick="deleteResource('${item.id}')">Delete</button>`:''}</div>`;
+  area.appendChild(row);
+ });
+}
+const _ovTimers={};let _lastFocus=null;
+function showOverlay(id){
+ const el=document.getElementById(id);clearTimeout(_ovTimers[id]);el.classList.remove('closing');
+ if(!document.querySelector('.overlay.show'))_lastFocus=document.activeElement;
+ el.classList.add('show');document.body.style.overflow='hidden';document.documentElement.classList.add('modal-open');
+ const c=el.querySelector('.close');if(c)c.focus({preventScroll:true});
+}
+function closeOverlay(id){
+ const el=document.getElementById(id);if(!el.classList.contains('show')||el.classList.contains('closing'))return;
+ if(id==='subjectOverlay')document.getElementById('resourceContent').dataset.key='';
+ el.classList.add('closing');
+ _ovTimers[id]=setTimeout(()=>{
+  el.classList.remove('show','closing');
+  if(!document.querySelector('.overlay.show')){document.body.style.overflow='';document.documentElement.classList.remove('modal-open');if(_lastFocus&&_lastFocus.focus){try{_lastFocus.focus({preventScroll:true})}catch(e){}}}
+ },matchMedia('(prefers-reduced-motion: reduce)').matches?0:230);
+}
+function outsideClose(e,id){if(e.target.id===id)closeOverlay(id)}
+function openAdmin(){showOverlay('adminOverlay');renderAdmin()}
+function renderAdmin(){
+ const el=document.getElementById('adminContent');
+ if(!admin){el.innerHTML=`<form class="adminform" onsubmit="login(event)"><h2>Welcome back, Ubaid.</h2><p style="color:#888">Sign in with the admin Firebase Authentication account.</p><div class="field"><label>Admin email</label><input id="adminEmail" type="email" autocomplete="username" required placeholder="Your admin email"></div><div class="field"><label>Password</label><input id="adminPassword" type="password" autocomplete="current-password" required placeholder="Firebase Auth password"></div><button class="btn btn-red" type="submit" style="width:100%">Sign in <i class="fa-solid fa-lock"></i></button><p style="font-size:11px;color:#666;margin-top:15px">Only the admin account UID should have write access in Firebase rules.</p></form>`;return}
+ el.innerHTML=`<div class="adminpanel"><div style="display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap"><div><div class="eyebrow">Content manager</div><h2 style="margin:5px 0 18px">Add a resource</h2></div><button class="btn" onclick="logout()">Log out</button></div>
+ <form onsubmit="addResource(event)">
+ <div class="field"><label>Subject</label><select id="adminSubject">${getSubjectNames().map(n=>`<option>${escapeHTML(n)}</option>`).join('')}<option value="__new">+ Add new subject</option></select></div>
+ <div id="newSubjectWrap" class="field" style="display:none"><label>New subject name</label><input id="newSubject" placeholder="Subject name"></div>
+ <div class="field"><label>Resource type</label><select id="resourceType"><option>Books</option><option>Notes</option><option>Past Papers</option></select></div>
+ <div class="field"><label>Resource title</label><input id="resourceTitle" required placeholder="e.g. Chapter 1 textbook"></div>
+ <div class="field"><label>Upload PDF / file (recommended)</label><input id="resourceFile" type="file" accept="application/pdf,.pdf" /></div><div class="field"><label>Or paste an external resource URL</label><input id="resourceURL" type="url" placeholder="https://... (optional if uploading a PDF)"></div><small style="color:#777">Uploaded files go to Firebase Storage and are shared with all students.</small>
+ <div class="field"><label>Description (optional)</label><input id="resourceDesc" placeholder="Short details"></div>
+ <button class="btn btn-red" type="submit"><i class="fa-solid fa-plus"></i> Save resource</button></form>
+ <hr style="border-color:#ffffff18;margin:25px 0"><h3>Existing resources</h3><div class="adminlist" id="adminlist"></div></div>`;
+ document.getElementById('adminSubject').onchange=e=>document.getElementById('newSubjectWrap').style.display=e.target.value==='__new'?'grid':'none';
+ renderAdminList();
+}
+function login(e){e.preventDefault();if(!firebaseReady)return toast('Add Firebase config first');auth.signInWithEmailAndPassword(document.getElementById('adminEmail').value.trim(),document.getElementById('adminPassword').value).then(()=>{admin=true;renderAdmin();toast('Admin signed in')}).catch(err=>{console.error(err);toast('Sign-in failed: check admin email/password')})}
+function logout(){if(auth)auth.signOut().then(()=>{admin=false;renderAdmin();toast('Logged out')})}
+async function addResource(e){
+ e.preventDefault();if(!admin||!auth.currentUser)return toast('Admin sign-in required');if(!firebaseReady)return toast('Firebase setup is incomplete');
+ let subject=document.getElementById('adminSubject').value;
+ if(subject==='__new'){subject=document.getElementById('newSubject').value.trim();if(!subject)return toast('Enter a subject name')}
+ const type=document.getElementById('resourceType').value,title=document.getElementById('resourceTitle').value.trim(),description=document.getElementById('resourceDesc').value.trim();
+ const file=document.getElementById('resourceFile').files[0];let url=document.getElementById('resourceURL').value.trim(),storagePath='';
+ if(!title)return toast('Enter a resource title');if(!file&&!validURL(url))return toast('Choose a PDF or enter a valid URL');
+ try{
+  if(file){if(file.type!=='application/pdf'&&!file.name.toLowerCase().endsWith('.pdf'))return toast('Please upload a PDF file');if(file.size>25*1024*1024)return toast('PDF must be 25 MB or smaller');storagePath=`resources/${Date.now()}_${file.name.replace(/[^a-zA-Z0-9._-]/g,'_')}`;const ref=storage.ref().child(storagePath);await ref.put(file,{contentType:'application/pdf'});url=await ref.getDownloadURL()}
+  await db.collection('resources').add({subject,type,title,url,description,storagePath,createdAt:firebase.firestore.FieldValue.serverTimestamp(),createdBy:auth.currentUser.uid});
+  document.getElementById('resourceTitle').value='';document.getElementById('resourceURL').value='';document.getElementById('resourceDesc').value='';document.getElementById('resourceFile').value='';toast('Resource published for all students');
+ }catch(err){console.error(err);toast('Upload failed. Check Firebase Storage/Firestore rules and billing setup.')}
+}
+
+function renderAdminList(){
+ const el=document.getElementById('adminlist');if(!el)return;el.innerHTML='';
+ Object.entries(resources).forEach(([sub,items])=>items.forEach(item=>{
+  const row=document.createElement('div');row.className='adminitem';row.innerHTML=`<span><strong>${escapeHTML(item.title)}</strong><br><small style="color:#888">${escapeHTML(sub)} · ${escapeHTML(item.type)}</small></span><span style="display:flex;gap:5px"><button class="btn" onclick="editResource('${item.id}')">Edit</button><button class="btn" onclick="deleteResource('${item.id}')">×</button></span>`;el.appendChild(row)
+ }));
+ if(!el.children.length)el.innerHTML='<p style="color:#777">No resources saved yet.</p>';
+}
+function findResource(id){for(const [subject,arr] of Object.entries(resources)){const item=arr.find(x=>x.id===id);if(item)return {subject,item}}}
+async function editResource(id){const found=findResource(id);if(!found||!admin)return;const title=prompt('Resource title:',found.item.title);if(title===null)return;const description=prompt('Description:',found.item.description||'');if(description===null)return;if(!title.trim())return toast('Title cannot be empty');try{await db.collection('resources').doc(id).update({title:title.trim(),description:description.trim()});toast('Resource updated')}catch(err){console.error(err);toast('Update failed; check Firestore rules')}}
+async function deleteResource(id){const found=findResource(id);if(!found||!admin)return;if(!confirm('Delete this resource for all students?'))return;try{await db.collection('resources').doc(id).delete();if(found.item.storagePath){try{await storage.ref().child(found.item.storagePath).delete()}catch(storageErr){console.warn('Storage cleanup failed',storageErr)}}toast('Resource deleted for all students')}catch(err){console.error(err);toast('Delete failed; check Firestore rules')}}
+
+function validURL(s){try{const u=new URL(s);return u.protocol==='https:'||u.protocol==='http:'}catch{return false}}
+function safeURL(s){return validURL(s)?escapeHTML(s):'#'}
+function escapeHTML(s){return String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
+function toast(msg){const t=document.getElementById('toast');t.textContent=msg;t.style.display='block';clearTimeout(window.toastTimer);window.toastTimer=setTimeout(()=>t.style.display='none',2600)}
+document.addEventListener('keydown',e=>{if(e.key==='Escape')document.querySelectorAll('.overlay.show').forEach(o=>closeOverlay(o.id))});
+renderSubjects();
+initFirebase();
+// crimson particle field: DPR-aware, density by screen size, pointer push, pauses when hidden or a modal is open
+(()=>{
+ const c=document.getElementById('particles');if(!c)return;
+ const ctx=c.getContext('2d'),reduce=matchMedia('(prefers-reduced-motion: reduce)').matches,root=document.documentElement;
+ let W=0,H=0,dots=[],raf=0,mx=-999,my=-999,rt=0;
+ const rnd=(a,b)=>a+Math.random()*(b-a);
+ function size(){
+  const dpr=Math.min(window.devicePixelRatio||1,2);W=innerWidth;H=innerHeight;
+  c.width=Math.round(W*dpr);c.height=Math.round(H*dpr);c.style.width=W+'px';c.style.height=H+'px';ctx.setTransform(dpr,0,0,dpr,0,0);
+  const small=W<640,n=Math.round(Math.max(14,Math.min(small?26:62,W*H/(small?17000:21000))));
+  while(dots.length<n)dots.push({x:rnd(0,W),y:rnd(0,H),vx:rnd(-.2,.2),vy:rnd(-.2,.2),r:rnd(.6,1.8),hot:Math.random()<.2});
+  dots.length=n;dots.forEach(p=>{if(p.x>W)p.x=rnd(0,W);if(p.y>H)p.y=rnd(0,H)});
+ }
+ function render(move){
+  ctx.clearRect(0,0,W,H);
+  const link=W<640?92:128,l2=link*link,R=150;
+  for(let i=0;i<dots.length;i++){
+   const p=dots[i];
+   if(move){
+    p.x+=p.vx;p.y+=p.vy;if(p.x<0||p.x>W)p.vx*=-1;if(p.y<0||p.y>H)p.vy*=-1;
+    const dx=p.x-mx,dy=p.y-my,d2=dx*dx+dy*dy;
+    if(d2<R*R&&d2>1){const d=Math.sqrt(d2),f=(1-d/R)*.9;p.x+=dx/d*f;p.y+=dy/d*f}
+   }
+   ctx.beginPath();ctx.arc(p.x,p.y,p.r,0,6.2832);ctx.fillStyle=p.hot?'rgba(255,64,64,.5)':'rgba(255,90,90,.16)';ctx.fill();
+   for(let j=i+1;j<dots.length;j++){
+    const q=dots[j],dx=p.x-q.x,dy=p.y-q.y,d2=dx*dx+dy*dy;
+    if(d2<l2){ctx.beginPath();ctx.moveTo(p.x,p.y);ctx.lineTo(q.x,q.y);ctx.strokeStyle='rgba(255,43,43,'+(.07*(1-Math.sqrt(d2)/link)).toFixed(3)+')';ctx.lineWidth=1;ctx.stroke()}
+   }
+  }
+ }
+ function loop(){raf=requestAnimationFrame(loop);if(!root.classList.contains('modal-open'))render(true)}
+ function start(){if(!raf&&!reduce)raf=requestAnimationFrame(loop)}
+ function stop(){cancelAnimationFrame(raf);raf=0}
+ addEventListener('resize',()=>{clearTimeout(rt);rt=setTimeout(()=>{size();if(reduce)render(false)},150)});
+ document.addEventListener('visibilitychange',()=>document.hidden?stop():start());
+ if(!reduce){
+  addEventListener('pointermove',e=>{if(e.pointerType==='mouse'){mx=e.clientX;my=e.clientY}},{passive:true});
+  root.addEventListener('mouseleave',()=>{mx=my=-999});
+ }
+ size();
+ if(reduce)render(false);else start();
+})();
+</script>
+
+<script>
+/* UBAID motion controller: one observer, one pointer listener, no duplicate loops */
+(()=>{
+ const $=id=>document.getElementById(id),root=document.documentElement,S=(el,k,v)=>el.style.setProperty(k,v);
+ const reduce=matchMedia('(prefers-reduced-motion: reduce)').matches;
+ const fine=matchMedia('(hover: hover) and (pointer: fine)').matches;
+
+
+ /* Built-in icons: no icon font or CDN needed, so they can never render as boxes */
+ const IC={
+  'square-root-variable':'<path d="M3 13h3l3 7 5-15h7"/>',
+  'book-open':'<path d="M12 6v14M12 6C10 4.5 6 4 3 5v14c3-1 7-.5 9 1 2-1.5 6-2 9-1V5c-3-1-7-.5-9 1z"/>',
+  'flask':'<path d="M9 3h6M10 3v6L4.5 19a1.5 1.5 0 0 0 1.3 2h12.4a1.5 1.5 0 0 0 1.3-2L14 9V3M7.5 15h9"/>',
+  'feather-pointed':'<path d="M20 4C11 4 7 9 7 16l-3 4M9 15h7M20 4c0 7-4 11-11 11"/>',
+  'laptop-code':'<path d="M4 5h16v11H4zM2 20h20M10 9l-2 2 2 2M14 9l2 2-2 2"/>',
+  'atom':'<circle cx="12" cy="12" r="1.6"/><ellipse cx="12" cy="12" rx="10" ry="4"/><ellipse cx="12" cy="12" rx="10" ry="4" transform="rotate(60 12 12)"/><ellipse cx="12" cy="12" rx="10" ry="4" transform="rotate(120 12 12)"/>',
+  'book-quran':'<path d="M5 4h12a2 2 0 0 1 2 2v14H7a2 2 0 0 1-2-2zM5 18a2 2 0 0 1 2-2h12M12 8l1 2 2 .3-1.5 1.5.4 2.2-1.9-1-1.9 1 .4-2.2L9 10.3 11 10z"/>',
+  'moon':'<path d="M20 14.5A8 8 0 0 1 9.5 4 8 8 0 1 0 20 14.5z"/>',
+  'dna':'<path d="M7 3c0 7 10 7 10 18M17 3c0 7-10 7-10 18M8 8h8M8 16h8"/>',
+  'book':'<path d="M5 4h13a1 1 0 0 1 1 1v15H6a1 1 0 0 1-1-1zM5 19a2 2 0 0 1 2-2h12"/>',
+  'file-lines':'<path d="M6 3h8l5 5v13H6zM14 3v5h5M9 13h7M9 17h7"/>',
+  'file-circle-check':'<path d="M6 3h8l5 5v13H6zM14 3v5h5M9 15l2.2 2.2L15.5 13"/>',
+  'arrow-up-right-from-square':'<path d="M7 17L17 7M8 7h9v9"/>',
+  'arrow-right':'<path d="M5 12h14M13 6l6 6-6 6"/>',
+  'magnifying-glass':'<circle cx="11" cy="11" r="6.5"/><path d="M16 16l5 5"/>',
+  'folder-open':'<path d="M3 7a2 2 0 0 1 2-2h4l2 2h8a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>',
+  'lock':'<rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/>',
+  'plus':'<path d="M12 5v14M5 12h14"/>',
+  'xmark':'<path d="M5 5l14 14M19 5L5 19"/>'
+ };
+ const KIND=new Set(['fa-solid','fa-regular','fa-brands']);
+ function hydrate(){
+  document.querySelectorAll('i[class*="fa-"]').forEach(el=>{
+   const cls=[...el.classList],name=(cls.find(c=>c.startsWith('fa-')&&!KIND.has(c))||'').slice(3);
+   const s=document.createElementNS('http://www.w3.org/2000/svg','svg');
+   s.setAttribute('viewBox','0 0 24 24');s.setAttribute('aria-hidden','true');
+   s.setAttribute('class',['i'].concat(cls.filter(c=>!c.startsWith('fa-'))).join(' '));
+   const st=el.getAttribute('style');if(st)s.setAttribute('style',st);
+   s.innerHTML=IC[name]||'<circle cx="12" cy="12" r="8"/>';
+   el.replaceWith(s);
+  });
+ }
+ hydrate();
+ new MutationObserver(hydrate).observe(document.body,{childList:true,subtree:true});
+
+ /* A. kinetic logo: split into letters (the crimson dot keeps its own colour) */
+ document.querySelectorAll('.logo').forEach(l=>{
+  l.setAttribute('aria-label','UBAID');if(l.tagName!=='A')l.setAttribute('role','img');
+  let n=0;
+  [...l.childNodes].forEach(node=>{
+   if(node.nodeType===3){
+    const f=document.createDocumentFragment();
+    [...node.textContent].forEach(ch=>{const s=document.createElement('span');s.className='lt';s.textContent=ch;S(s,'--n',n++);s.setAttribute('aria-hidden','true');f.appendChild(s)});
+    node.replaceWith(f);
+   }else if(node.nodeType===1){node.classList.add('lt');S(node,'--n',n++);node.setAttribute('aria-hidden','true')}
+  });
+  if(l.hasAttribute('data-now'))l.classList.add('in');
+ });
+
+ /* F/O. scroll reveals: observed once, content stays visible if JS fails */
+ const seen=new Set();let lastQ=null,watch=[],ready=false;
+ const io='IntersectionObserver' in window?new IntersectionObserver(entries=>{
+  let k=0;
+  entries.forEach(e=>{
+   if(!e.isIntersecting)return;const t=e.target;io.unobserve(t);
+   if(t.classList.contains('subject')){S(t,'--i',k++);seen.add(t.dataset.name)}
+   t.classList.add('in');
+  });
+ },{threshold:.12,rootMargin:'0px 0px -5% 0px'}):null;
+
+ /* E/K. called by renderSubjects(): classify cards as new (observe), seen (static) or filtered (quick swap) */
+ window.ubaidCards=function(){
+  const grid=$('subjectgrid'),sb=$('search');if(!grid)return;
+  const q=((sb&&sb.value)||'').toLowerCase(),changed=lastQ!==null&&q!==lastQ;lastQ=q;
+  if(io)watch.forEach(n=>io.unobserve(n));watch=[];
+  grid.querySelectorAll('.subject').forEach((card,i)=>{
+   if(!io||reduce){card.classList.add('in','static');return}
+   if(seen.has(card.dataset.name)){S(card,'--i',Math.min(i,6));card.classList.add('in',changed?'swap':'static')}
+   else if(ready){io.observe(card);watch.push(card)}
+  });
+ };
+ function startReveals(){
+  const els=[...document.querySelectorAll('.reveal:not(.subject),.logo[data-kin]')];
+  if(!io){els.forEach(e=>e.classList.add('in'));window.ubaidCards();return}
+  ready=true;els.forEach(e=>io.observe(e));window.ubaidCards();
+ }
+
+ /* G. loader: one smooth 2-second sweep, then the page reveals (Firebase keeps loading behind it) */
+ const loader=$('loader');let finished=false;
+ function go(){
+  if(finished)return;finished=true;
+  if(loader){loader.classList.add('out');setTimeout(()=>{loader.style.display='none'},reduce?0:600)}
+  root.classList.add('go');
+  document.querySelectorAll('.nav .logo').forEach(l=>l.classList.add('in'));
+  startReveals();
+ }
+ if(reduce){if(loader)loader.style.display='none';go()}
+ else{requestAnimationFrame(()=>requestAnimationFrame(()=>{if(loader)S(loader,'--p',1)}));setTimeout(go,2000)}
+
+ /* I. navbar state on scroll */
+ const nav=document.querySelector('.nav');let st=0;
+ if(nav){const upd=()=>{st=0;nav.classList.toggle('scrolled',scrollY>12)};addEventListener('scroll',()=>{if(!st)st=requestAnimationFrame(upd)},{passive:true});upd()}
+
+ /* J. pause the study-desk animations while it is off screen */
+ const art=document.querySelector('.hero-art');
+ if(art&&io)new IntersectionObserver(es=>es.forEach(e=>art.classList.toggle('off',!e.isIntersecting))).observe(art);
+
+ /* M. click ripple (all pointers, skipped for reduced motion) */
+ if(!reduce)document.addEventListener('pointerdown',e=>{
+  const b=e.target.closest&&e.target.closest('.btn');if(!b||b.disabled)return;
+  const r=b.getBoundingClientRect(),d=Math.max(r.width,r.height)*2,s=document.createElement('span');
+  s.className='rip';s.style.cssText='width:'+d+'px;height:'+d+'px;left:'+(e.clientX-r.left-d/2)+'px;top:'+(e.clientY-r.top-d/2)+'px';
+  s.addEventListener('animationend',()=>s.remove());b.appendChild(s);
+ },{passive:true});
+
+ /* D/E/J/M. one pointer listener, rAF-throttled: card tilt + highlight, spotlight, button magnet, parallax (mouse only) */
+ if(fine&&!reduce){
+  const hero=document.querySelector('.hero'),lim=(v,m)=>Math.max(-m,Math.min(m,v));
+  let px=0,py=0,tgt=null,raf=0,card=null,spot=null,btn=null,tx=0,ty=0,cx=0,cy=0;
+  function step(){
+   raf=0;
+   const nc=tgt?tgt.closest('.subject'):null,ns=tgt?tgt.closest('.spot'):null,nb=tgt?tgt.closest('.btn'):null;
+   if(card&&card!==nc){S(card,'--rx','0deg');S(card,'--ry','0deg');S(card,'--sp','0')}
+   if(spot&&spot!==ns)S(spot,'--sp','0');
+   if(btn&&btn!==nb){S(btn,'--bx','0px');S(btn,'--by','0px')}
+   card=nc;spot=ns;btn=nb;
+   if(card){const r=card.getBoundingClientRect(),x=(px-r.left)/r.width,y=(py-r.top)/r.height;
+    S(card,'--mx',(px-r.left)+'px');S(card,'--my',(py-r.top)+'px');S(card,'--rx',((.5-y)*6).toFixed(2)+'deg');S(card,'--ry',((x-.5)*6).toFixed(2)+'deg');S(card,'--sp','1')}
+   if(spot){const r=spot.getBoundingClientRect();S(spot,'--mx',(px-r.left)+'px');S(spot,'--my',(py-r.top)+'px');S(spot,'--sp','1')}
+   if(btn){const r=btn.getBoundingClientRect();S(btn,'--bx',lim((px-r.left-r.width/2)*.2,6).toFixed(1)+'px');S(btn,'--by',lim((py-r.top-r.height/2)*.2,5).toFixed(1)+'px')}
+   if(hero&&art){
+    const r=hero.getBoundingClientRect(),inside=tgt&&py>=r.top&&py<=r.bottom;
+    tx=inside?lim((px-(r.left+r.width/2))/(r.width/2),1):0;ty=inside?lim((py-(r.top+r.height/2))/(r.height/2),1):0;
+    cx+=(tx-cx)*.12;cy+=(ty-cy)*.12;S(art,'--px',cx.toFixed(3));S(art,'--py',cy.toFixed(3));
+    if(Math.abs(tx-cx)>.003||Math.abs(ty-cy)>.003)raf=requestAnimationFrame(step);
+   }
+  }
+  document.addEventListener('pointermove',e=>{if(e.pointerType!=='mouse')return;px=e.clientX;py=e.clientY;tgt=e.target;if(!raf)raf=requestAnimationFrame(step)},{passive:true});
+  root.addEventListener('mouseleave',()=>{tgt=null;if(!raf)raf=requestAnimationFrame(step)});
+ }
+
+ /* touch: a brief highlight where a card is tapped (no pointer tracking) */
+ if(!fine&&!reduce)document.addEventListener('pointerdown',e=>{
+  const c=e.target.closest&&e.target.closest('.subject');if(!c)return;
+  const r=c.getBoundingClientRect();S(c,'--mx',(e.clientX-r.left)+'px');S(c,'--my',(e.clientY-r.top)+'px');S(c,'--sp','1');
+  setTimeout(()=>S(c,'--sp','0'),450);
+ },{passive:true});
+
+ /* L. keep the tab indicator aligned if the viewport changes while a subject is open */
+ let rt=0;addEventListener('resize',()=>{clearTimeout(rt);rt=setTimeout(()=>{if(window.positionTabInd&&document.querySelector('#subjectOverlay.show'))positionTabInd(true)},120)});
+
+  window.__ubaidOK=true;
+})();
+</script>
+
+</body>
+</html>
